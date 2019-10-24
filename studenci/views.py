@@ -1,11 +1,11 @@
+import django.http
 from django.shortcuts import render
-
-from django.http import HttpResponse
-
+from django.contrib import messages
 from studenci.models import Miasto, Uczelnia
 
+
 def index(request):
-    return HttpResponse("<h1>Witaj wsród sudentów!</h1>")
+    return django.http.HttpResponse("<h1>Witaj wsród sudentów!</h1>")
     # return render(request,'pizza/index.html')
 
 
@@ -14,8 +14,12 @@ def miasta(request):
     if request.method == 'POST':
         nazwa = request.POST.get('nazwa', '')
         kod = request.POST.get('kod', '')
-        m = Miasto(nazwa=nazwa, kod=kod)
-        m.save()
+        if len(nazwa.strip()):
+            m = Miasto(nazwa=nazwa, kod=kod)
+            m.save()
+            messages.success(request, "Dane zapisane!")
+        else:
+            messages.error(request, "Błędne dane!")
 
     miasta = Miasto.objects.all()
     kontekst = {'miasta': miasta}
